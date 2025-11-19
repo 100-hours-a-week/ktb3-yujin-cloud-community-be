@@ -1,0 +1,36 @@
+# Gradle build directories
+/build
+!/build/libs/*.jar
+
+# Gradle cache
+/.gradle
+
+# IDE & OS files
+/.idea
+/.vscode
+*.iml
+*.class
+*.log
+.DS_Store
+
+# Git
+.git
+.gitignore
+
+# 환경 변수 파일 (절대 이미지에 포함되면 안 됨)
+.env
+.env.*
+application.yml
+application-*.yml
+
+# Docker ignore
+.dockerignore
+
+# Logs
+logs/
+*.log
+
+# Test configuration (local only)
+src/test/
+
+HELP.md

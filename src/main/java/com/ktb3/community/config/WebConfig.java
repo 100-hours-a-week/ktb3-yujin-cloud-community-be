@@ -17,9 +17,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**") // CORS 허용할 URL 패턴
-                .allowedOrigins(
+                .allowedOriginPatterns(
                         "http://localhost:3000",   // express 서버 사용
-                        "http://127.0.0.1:5500"
+                        "https://yu-jin.o-r.kr"    // 배포시 도메인
                 )
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowCredentials(true) // 쿠키나 인증정보 포함 시 true
