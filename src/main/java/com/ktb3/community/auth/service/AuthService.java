@@ -43,7 +43,7 @@ public class AuthService {
 
         // 3. 2번의 값과 입력값 일치하는지 확인
         if (!passwordEncoder.matches(request.getPassword(), memberAuth.getPassword())) {
-            throw new BusinessException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
         }
 
         // 토큰 발급
@@ -70,7 +70,7 @@ public class AuthService {
 
         // 3. 회원 정보 조회
         Member member = memberRepository.findByIdAndDeletedAtIsNull(savedToken.getMemberId())
-                .orElseThrow(() -> new BusinessException(HttpStatus.UNAUTHORIZED, "회원 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(HttpStatus.BAD_REQUEST, "회원 정보를 찾을 수 없습니다."));
 
         // 4. 새 Access / Refresh Token 생성 (회전)
         TokenService.TokenInfo tokens = tokenService.rotateTokens(savedToken, member);
@@ -108,7 +108,7 @@ public class AuthService {
 
         // 2. 인증정보 조회
         MemberAuth memberAuth = memberAuthRepository.findById(memberId)
-                .orElseThrow(()-> new BusinessException(HttpStatus.UNAUTHORIZED, "인증정보를 찾을 수 없습니다."));
+                .orElseThrow(()-> new BusinessException(HttpStatus.BAD_REQUEST, "인증정보를 찾을 수 없습니다."));
 
         // 3. 현재 비밀번호 맞는지 확인
         if(!passwordEncoder.matches(currentPassword, memberAuth.getPassword())){
