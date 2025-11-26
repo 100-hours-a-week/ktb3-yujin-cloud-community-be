@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+jwt:
+  secret: testcommunityjwtsecretkey
+  access-exp-ms: 1800000        # 30분 (Access Token 만료시간)
+  refresh-exp-ms: 604800000     # 7일 (Refresh Token 만료시간)
