@@ -50,7 +50,8 @@ services:
     restart: always
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - /etc/letsencrypt:/etc/letsencrypt
+      - /etc/letsencrypt/live/yu-jin.o-r.kr:/etc/letsencrypt/live/yu-jin.o-r.kr:ro
+      - /etc/letsencrypt/live/registry.yu-jin.o-r.kr:/etc/letsencrypt/live/registry.yu-jin.o-r.kr:ro
     ports:
       - "80:80"
       - "443:443"
