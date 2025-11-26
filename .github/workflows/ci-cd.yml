@@ -106,7 +106,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/${{ secrets.SERVER_USER }}/community
-            docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest
-            docker compose --env-file .env.prod down
-            docker compose --env-file .env.prod up -d
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest
+            sudo docker compose --env-file .env.prod down
+            sudo docker compose --env-file .env.prod up -d
       
