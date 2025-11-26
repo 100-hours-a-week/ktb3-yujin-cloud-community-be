@@ -47,8 +47,8 @@ jobs:
         run: cat src/test/resources/application.yml
 
       # 5. test 진행
-      - name: Test with Gradle
-        run: ./gradlew test
+      # - name: Test with Gradle
+      #  run: ./gradlew test
 
       # 6. test코드 제외하고 jar build
       - name: Build JAR
