@@ -3,6 +3,8 @@ services:
     image: hanyujin1022/backend:latest
     container_name: community-backend
     restart: always
+    ports:
+      - 8080:8080
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       DB_HOST: ${DB_HOST}

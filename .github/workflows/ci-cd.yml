@@ -61,39 +61,9 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
 
-  # 배포 전, 파일 위치 정리
-  setup:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Debug workspace
-        run: ls -R .
-
-      - name: Move docker-compose.yml
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "deploy/docker-compose.yml"
-          target: "/home/${{ secrets.SERVER_USER }}/community/"
-          strip_components: 1
-
-      - name: Move nginx.conf
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "deploy/nginx.conf"
-          target: "/home/${{ secrets.SERVER_USER }}/community/nginx/"
-          strip_components: 1
-
   # 실제로 배포
   deploy:
-    needs: setup
+    needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
@@ -105,7 +75,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/${{ secrets.SERVER_USER }}/community
+            cd /home/${{ secrets.SERVER_USER }}/ktb3-yujin-cloud-community-be
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest
             sudo docker compose --env-file .env.prod down
             sudo docker compose --env-file .env.prod up -d
