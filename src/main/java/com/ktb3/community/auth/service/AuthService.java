@@ -4,6 +4,7 @@ import com.ktb3.community.auth.dto.AuthDto;
 import com.ktb3.community.auth.repository.RefreshTokenRepository;
 import com.ktb3.community.common.exception.BusinessException;
 import com.ktb3.community.common.util.JwtProvider;
+import com.ktb3.community.file.service.FileService;
 import com.ktb3.community.member.entity.Member;
 import com.ktb3.community.member.entity.MemberAuth;
 import com.ktb3.community.member.repository.MemberAuthRepository;
@@ -28,8 +29,8 @@ public class AuthService {
     private final MemberAuthRepository memberAuthRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final TokenService tokenService;
+    private final FileService fileService;
 
     public AuthDto.TokenResponse login(AuthDto.LoginRequest request){
 
@@ -49,8 +50,11 @@ public class AuthService {
         // 토큰 발급
         TokenService.TokenInfo tokens = tokenService.createTokens(member);
 
+        // 프로필 이미지 조회
+        String profileUrl = fileService.getProfileImageUrl(member.getId());
+
         return new AuthDto.TokenResponse(
-                member.getId(), member.getEmail(), member.getNickname(),
+                member.getId(), member.getEmail(), member.getNickname(),profileUrl,
                 tokens.accessToken(),
                 tokens.refreshToken()
         );
@@ -75,7 +79,7 @@ public class AuthService {
         // 4. 새 Access / Refresh Token 생성 (회전)
         TokenService.TokenInfo tokens = tokenService.rotateTokens(savedToken, member);
 
-        return new AuthDto.TokenResponse(member.getId(), member.getEmail(), member.getNickname(), tokens.accessToken(),
+        return new AuthDto.TokenResponse(member.getId(), member.getEmail(), member.getNickname(),null, tokens.accessToken(),
                 tokens.refreshToken());
 
     }

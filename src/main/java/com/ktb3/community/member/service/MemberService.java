@@ -2,6 +2,7 @@ package com.ktb3.community.member.service;
 
 import com.ktb3.community.common.exception.BusinessException;
 import com.ktb3.community.config.SecurityConfig;
+import com.ktb3.community.file.dto.ImageRequest;
 import com.ktb3.community.file.entity.File;
 import com.ktb3.community.file.service.FileService;
 import com.ktb3.community.member.dto.MemberDto;
@@ -77,40 +78,46 @@ public class MemberService {
         return MemberDto.DetailResponse.from(member, profileUrl);
     }
 
-    // 회원정보 수정(닉네임 + 프로필 이미지)
+    // 닉네임 수정
     @Transactional
-    public MemberDto.DetailResponse updateMember(Long memberId, String nickname, MultipartFile profileImage, Boolean deleteProfile) {
-        // 1. 회원 조회
+    public String updateNickname(String nickname,Long memberId) {
+
         Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
-                .orElseThrow(()-> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
 
-        // 2. 닉네임 수정
-        if (nickname != null || !nickname.isBlank()) {
-            if (memberRepository.existsByNickname(nickname) && !member.getNickname().equals(nickname)) {
-                throw new IllegalArgumentException("이미 사용중인 닉네임입니다.");
-            }
-            member.updateNickname(nickname);
+        // 중복 체크
+        if(isNicknameDuplicate(nickname)) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임입니다.");
         }
 
-        // 3. 프로필 이미지 처리
-        String profileImageUrl = null;
+        member.updateNickname(nickname);
 
-        // 3-1. 프로필 이미지 삭제
-        if (deleteProfile) {
-            fileService.deleteProfileImage(member);
+        return member.getNickname();
+    }
 
-            // 3-2. 이미지 변경
-        } else if (profileImage != null && !profileImage.isEmpty()) {
-            profileImageUrl = fileService.saveProfileImage(member, profileImage);
+    // 프로필 이미지 수정 (파일 메타데이터 저장)
+    @Transactional
+    public MemberDto.DetailResponse updateProfileImage(Long memberId, ImageRequest req) {
 
-            // 3-3. 이미지 변경 없음
-        } else {
-            profileImageUrl = fileService.getProfileImageUrl(memberId);
-        }
+        Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
+                .orElseThrow(() -> new BusinessException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
 
-        return MemberDto.DetailResponse.from(member, profileImageUrl);
+        File saved = fileService.saveProfileImage(member, req);
+        String imageKey = saved.getFilePath();
+        String imageUrl = fileService.buildFileUrl(imageKey);
 
 
+        return MemberDto.DetailResponse.from(member, imageUrl);
+    }
+
+
+    // 프로필 이미지 삭제 (S3 + DB)
+    @Transactional
+    public void deleteProfileImage(Long memberId) {
+        Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
+                .orElseThrow(() -> new BusinessException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
+
+        fileService.deleteProfileImage(member);
     }
 
 
@@ -120,11 +127,11 @@ public class MemberService {
 
         // 1. 회원확인
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(()-> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+                .orElseThrow(()-> new BusinessException(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."));
 
         // 2. 이미 탈퇴한 회원인지 확인
         if(member.getDeletedAt() != null) {
-            throw new IllegalArgumentException("이미 탈퇴한 회원입니다.");
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "이미 탈퇴한 회원입니다.");
         }
 
         // 3. 회원 논리 삭제
