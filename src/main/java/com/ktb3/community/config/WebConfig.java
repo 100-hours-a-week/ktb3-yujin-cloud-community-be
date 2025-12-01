@@ -19,7 +19,10 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**") // CORS 허용할 URL 패턴
                 .allowedOriginPatterns(
                         "http://localhost:3000",   // express 서버 사용
-                        "https://yu-jin.o-r.kr"    // 배포시 도메인
+                        "https://yu-jin.o-r.kr",
+                        "https://www.yu-jin.o-r.kr",
+                        "http://yu-jin.o-r.kr",
+                        "http://www.yu-jin.o-r.kr"
                 )
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowCredentials(true) // 쿠키나 인증정보 포함 시 true

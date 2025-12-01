@@ -8,6 +8,7 @@ import static com.ktb3.community.common.constant.TokenConst.*;
 @Component
 public class CookieUtil {
 
+    private static final String DOMAIN = "yu-jin.o-r.kr";
 
     /**
      * Access Token 쿠키 생성
@@ -17,10 +18,11 @@ public class CookieUtil {
     public ResponseCookie createAccessTokenCookie(String token) {
         return ResponseCookie.from(ACCESS_TOKEN, token)
                 .httpOnly(true)        // JavaScript 접근 차단 (XSS 방어)
-                .secure(false)         // 개발: false, 운영: true
+                .secure(true)         // 개발: false, 운영: true
                 .path("/")
                 .maxAge(Duration.ofMinutes(30))
-                .sameSite("Lax")
+                .sameSite("None")
+                .domain(DOMAIN)
                 .build();
     }
 
@@ -32,10 +34,11 @@ public class CookieUtil {
     public ResponseCookie createRefreshTokenCookie(String token) {
         return ResponseCookie.from(REFRESH_TOKEN, token)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .maxAge(Duration.ofDays(7))
-                .sameSite("Strict")
+                .sameSite("None")
+                .domain(DOMAIN)
                 .build();
     }
 
@@ -48,7 +51,9 @@ public class CookieUtil {
                 .maxAge(0)
                 .path("/")
                 .httpOnly(true)
-                .sameSite("Lax")
+                .secure(true)
+                .sameSite("None")
+                .domain(DOMAIN)
                 .build();
     }
 
@@ -61,7 +66,9 @@ public class CookieUtil {
                 .maxAge(0)
                 .path("/")
                 .httpOnly(true)
-                .sameSite("Strict")
+                .secure(true)
+                .sameSite("None")
+                .domain(DOMAIN)
                 .build();
     }
 
