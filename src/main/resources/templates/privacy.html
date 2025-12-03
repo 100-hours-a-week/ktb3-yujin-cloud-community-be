@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title th:text="(${serviceName} ?: '커뮤니티') + ' 개인정보처리방침'">커뮤니티 개인정보처리방침</title>
+    <title th:text="(${serviceName} ?: '커뮤니티') + ' 개인정보처리방침'"></title>
     <style>
         body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif; line-height: 1.6; color:#222; margin:0; }
         .container { max-width:960px; margin: 40px auto; padding: 0 20px; }
@@ -23,7 +23,7 @@
 <body>
 <div class="container">
 
-    <h1 th:text="(${serviceName} ?: '커뮤니티') + ' 개인정보처리방침'">커뮤니티 개인정보처리방침</h1>
+    <h1 th:text="(${serviceName} ?: '커뮤니티') + ' 개인정보처리방침'"></h1>
     <p class="meta">
         시행일: <span th:text="${effectiveDate} ?: '2025-10-20'">2025-10-20</span> ·
         마지막 업데이트: <span th:text="${lastUpdated} ?: '2025-10-20'">2025-10-20</span>
