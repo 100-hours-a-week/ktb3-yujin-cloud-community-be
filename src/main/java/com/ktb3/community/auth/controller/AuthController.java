@@ -112,7 +112,8 @@ public class AuthController {
         Map<String, Object> body = Map.of(
                 "id", response.getId(),
                 "email", response.getEmail(),
-                "nickname", response.getNickname()
+                "nickname", response.getNickname(),
+                "profileUrl", response.getProfileUrl()
         );
 
         return ResponseEntity.ok()

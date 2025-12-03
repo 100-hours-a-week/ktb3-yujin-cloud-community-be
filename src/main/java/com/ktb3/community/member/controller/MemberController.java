@@ -3,17 +3,15 @@ package com.ktb3.community.member.controller;
 import com.ktb3.community.auth.annotation.AuthMemberId;
 import com.ktb3.community.auth.service.AuthService;
 import com.ktb3.community.auth.util.CookieUtil;
-import com.ktb3.community.common.exception.BusinessException;
+
+import com.ktb3.community.file.dto.ImageRequest;
 import com.ktb3.community.member.dto.MemberDto;
 import com.ktb3.community.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -28,8 +26,6 @@ public class MemberController {
 
     /**
      * 이메일 중복확인
-     * @param request
-     * @return
      */
     @PostMapping("/email")
     public ResponseEntity<Map<String, Boolean>> checkEmail(@Valid @RequestBody MemberDto.CheckEmailRequest request){
@@ -39,8 +35,6 @@ public class MemberController {
 
     /**
      * 닉네임 중복확인
-     * @param request
-     * @return
      */
     @PostMapping("/nickname")
     public ResponseEntity<Map<String,Boolean>> checkNickname(@Valid @RequestBody MemberDto.CheckNicknameRequest request) {
@@ -50,8 +44,6 @@ public class MemberController {
 
     /**
      * 회원가입
-     * @param request
-     * @return
      */
     @PostMapping
     public ResponseEntity<Map<String, String>> signUp(@Valid @RequestBody MemberDto.SignUpRequest request){
@@ -61,8 +53,6 @@ public class MemberController {
 
     /**
      * 회원 정보 조회
-     * @param memberId
-     * @return
      */
     @GetMapping("/me")
     public ResponseEntity<MemberDto.DetailResponse> getMember(@AuthMemberId Long memberId) {
@@ -72,50 +62,43 @@ public class MemberController {
     }
 
     /**
-     * 회원 정보 수정
-     * @param nickname
-     * @param profileImage
-     * @param deleteProfileImage
-     * @param memberId
-     * @return
+     * 프로필 이미지 수정 (이미지 메타데이터 DB 저장)
      */
-    // 텍스트 + 파일 전송이라 multipart/form-data형식어야함
-    @PatchMapping(value = "/{me}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MemberDto.DetailResponse> updateMember(
-            @RequestParam(value = "nickname", required = false)
-            @Size(min = 1, max = 10, message = "닉네임은 1자 이상 10자 이하여야 합니다")
-            @Pattern(regexp = "^\\S+$", message = "닉네임에 공백을 사용할 수 없습니다")
-            String nickname,
-            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
-            @RequestParam(value = "deleteProfileImage", required = false, defaultValue = "false") Boolean deleteProfileImage,
-            @AuthMemberId Long memberId) {
+    @PatchMapping("/profile-image")
+    public ResponseEntity<MemberDto.DetailResponse> updateProfileImage(
+            @RequestBody ImageRequest request,
+            @AuthMemberId Long memberId
+    ) {
+        return ResponseEntity.ok(memberService.updateProfileImage(memberId, request));
+    }
 
-        // 최소한 하나는 수정되어야 함
-        if (nickname == null && profileImage == null && !deleteProfileImage) {
-            throw new BusinessException(HttpStatus.BAD_REQUEST, "수정할 내용이 없습니다");
-        }
+    /**
+     * 프로필 이미지 삭제(기본 이미지로 클릭시)
+     */
+    @DeleteMapping("/profile-image")
+    public ResponseEntity<Map<String, Object>> deleteProfileImage(
+            @AuthMemberId Long memberId
+    ) {
+        memberService.deleteProfileImage(memberId);
+        return ResponseEntity.ok(Map.of("ok", true));
+    }
 
-        // 이미지 파일 검증
-        if (profileImage != null && !profileImage.isEmpty()) {
-            // 컨텐트 타입 검증
-            String contentType = profileImage.getContentType();
-            if (contentType == null || !contentType.startsWith("image/")) {
-                throw new IllegalArgumentException("이미지 파일만 업로드 가능합니다");
-            }
-            // 파일 확장자 검증 필요
-            // 이미지 사이즈 제한 필요한가?
-        }
+    /**
+     * 닉네임 수정
+     */
+    @PatchMapping("/nickname")
+    public ResponseEntity<Map<String, String>> updateNickname(
+            @RequestBody @Valid MemberDto.CheckNicknameRequest request,
+            @AuthMemberId Long memberId
+    ) {
 
-        MemberDto.DetailResponse response = memberService.updateMember(memberId, nickname,profileImage,deleteProfileImage);
+        String newNickname = memberService.updateNickname(request.getNickname(), memberId);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(Map.of("nickname", newNickname));
     }
 
     /**
      * 회원탈퇴
-     * @param memberId
-     * @param request
-     * @return
      */
     @DeleteMapping("/withdraw")
     public ResponseEntity<Map<String, String>> deleteMember (@AuthMemberId Long memberId, HttpServletRequest request) {

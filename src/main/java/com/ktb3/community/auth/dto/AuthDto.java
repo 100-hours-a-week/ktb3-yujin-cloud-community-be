@@ -60,6 +60,7 @@ public class AuthDto {
         private Long id;
         private String email;
         private String nickname;
+        private String profileUrl;
         private String accessToken;
         private String refreshToken;
     }
