@@ -56,14 +56,15 @@ Refresh Token의 세션성, QueryDSL 기반 조회 최적화 등을 고려해 �
 * 이후 Frontend/Backend EC2 분리, RDS로의 DB 이전, ALB를 통한 트래픽 분배, HTTPS 도메인 연결까지 확장했습니다.
 
 ## 💻 기술 스택
-| 분야        | 기술                            |
-| --------- | ----------------------------- |
-| Language  | JavaScript (Vanilla)          |
-| Runtime   | Node.js                       |
-| Framework | Express.js (MPA)              |
-| Styling   | CSS                           |
-| Infra     | AWS EC2 / ALB / S3 / 외부 DNS   |
-| Deploy    | GitHub Actions → EC2 배포 파이프라인 |
+| 분야        | 기술                              |
+| --------- |---------------------------------|
+| Language  | Java 21                         |
+| Framework | Spring Boot 3.5.6               |
+| ORM       | Spring Data JPA + QueryDSL      |
+| DB        | MySQL 8.x (RDS)                 |
+| Auth      | JWT 인증/인가                       |
+| Infra     | AWS EC2 / RDS / S3 / ALB        |
+| Deploy    | GitHub Actions + Docker Compose |
 
 
 ## 📂 폴더 구조
