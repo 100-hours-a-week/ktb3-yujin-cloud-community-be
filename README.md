@@ -1,4 +1,4 @@
-# Closet Lounge
+<img width="290" height="100" alt="Closet Lounge" src="https://github.com/user-attachments/assets/60cf468b-e3ec-4c5a-abf1-e94044934d11" />
 
 ## 📌 프로젝트 소개
 **Closet Lounge는 패션에 관심 있는 사용자들이 모여 소통하는 폐쇄형 패션 커뮤니티 서비스**입니다.
